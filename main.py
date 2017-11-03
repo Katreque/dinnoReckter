@@ -4,29 +4,31 @@ from PIL import ImageGrab, Image
 import SendKeys
 from datetime import datetime
 
+
 def pular():
   send = "{SPACE}"
   SendKeys.SendKeys(send)
 
+
 def ajustaImg():
   img = ImageGrab.grab()
-  img = img.crop((460, 537, 470,  547))
-  img.save('./S.png')
+  img = img.crop((463, 540, 468, 545))
+  #img = img.crop((410, 487, 520, 597))
 
-  img = cv2.imread('./S.png')
-  img = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-  cv2.imwrite("./S.png", img)
+  imgcv = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2BGR)
+  imgcv = cv2.cvtColor(imgcv, cv2.COLOR_BGR2GRAY)
+  _,imgcv = cv2.threshold(imgcv, 128, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
+  cv2.imwrite("s.png", imgcv)
 
-  img = Image.open('./S.png').convert('L')
-  if not img.getbbox():
-    print('Yep!')
+  if cv2.countNonZero(imgcv) < 15:
+    print("Jump")
     pular()
-  else:
-    print('Noup!')
+
 
 def tirarPrint():
   while (1):
     ajustaImg()
+
 
 tirarPrint()
 
@@ -44,4 +46,3 @@ def tirarPrint():
     ajustaImg()
     count += 1
 """
-
