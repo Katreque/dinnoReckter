@@ -21,10 +21,10 @@ def findDino():
   bottom_right = (top_left[0] + w, top_left[1] + h)
 
   cv2.rectangle(imgcv, top_left, bottom_right, 0, 2)
-  cv2.rectangle(imgcv, (top_left[0] + 450, top_left[1] + 53), (bottom_right[0] + 350, bottom_right[1] - 53), 0, 2)
+  cv2.rectangle(imgcv, (top_left[0] + 450, top_left[1] + 86), (bottom_right[0] + 350, bottom_right[1] - 40), 0, 2)
   cv2.imwrite("match.png", imgcv)
 
-  return [top_left[1] + 53, bottom_right[1] - 53, top_left[0] + 450, bottom_right[0] + 350]
+  return [top_left[1] + 86, bottom_right[1] - 40, top_left[0] + 450, bottom_right[0] + 350]
 
 def pular():
   send = "{SPACE}"
@@ -40,7 +40,7 @@ def ajustaImg(cod):
   imgcort = imgcv[cod[0]:cod[1], cod[2]:cod[3]]
   cv2.imwrite("s.png", imgcort)
 
-  if cv2.countNonZero(imgcort) < 10:
+  if cv2.countNonZero(imgcort) < 112:
     print("Jump")
     pular()
 
