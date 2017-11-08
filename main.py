@@ -1,10 +1,12 @@
 import cv2
 import numpy as np
 from PIL import ImageGrab
+from mss import mss
 import SendKeys
 import time
 from datetime import datetime
 
+cod = []
 
 def findDino():
   time.sleep(3)
@@ -24,39 +26,29 @@ def findDino():
   cv2.rectangle(imgcv, (top_left[0] + 450, top_left[1] + 86), (bottom_right[0] + 350, bottom_right[1] - 40), 0, 2)
   cv2.imwrite("match.png", imgcv)
 
-  return [top_left[1] + 86, bottom_right[1] - 40, top_left[0] + 450, bottom_right[0] + 350]
+  global cod
+  cod = [top_left[1] + 86, bottom_right[1] - 40, top_left[0] + 450, bottom_right[0] + 350]
 
 def pular():
   send = "{SPACE}"
   SendKeys.SendKeys(send)
 
-def ajustaImg(cod):
-  img = ImageGrab.grab()
+def ajustaImg():
+  monitor = {'top': cod[1] - 30, 'left': cod[2], 'width': 30, 'height': 30}
+  with mss() as sct:
+    imgcv = np.array(sct.grab(monitor))
 
-  imgcv = cv2.cvtColor(np.array(img), cv2.COLOR_RGB2BGR)
   imgcv = cv2.cvtColor(imgcv, cv2.COLOR_BGR2GRAY)
   _,imgcv = cv2.threshold(imgcv, 128, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
 
-  imgcort = imgcv[cod[0]:cod[1], cod[2]:cod[3]]
-  cv2.imwrite("s.png", imgcort)
+  #cv2.imwrite("s.png", imgcv)
 
-  if cv2.countNonZero(imgcort) < 112:
-    print("Jump")
+  if cv2.countNonZero(imgcv) < 112:
+    #print("Jump")
     pular()
 
 def tirarPrint():
-  cod = findDino()
-  print cod
-  while(1):
-    ajustaImg(cod)
-
-
-tirarPrint()
-
-"""
-  DEBUG DE FPSTRABSON
-
-def tirarPrint():
+  findDino()
   dt = datetime.now().second
   count = 0
   while(1):
@@ -65,5 +57,23 @@ def tirarPrint():
       count = 0
       dt = datetime.now().second
     ajustaImg()
+    count += 1
+
+
+tirarPrint()
+
+"""
+  DEBUG DE FPSTRABSON
+
+def tirarPrint():
+  cod = findDino()
+  dt = datetime.now().second
+  count = 0
+  while(1):
+    if dt != datetime.now().second:
+      print(count)
+      count = 0
+      dt = datetime.now().second
+    ajustaImg(cod)
     count += 1
 """
