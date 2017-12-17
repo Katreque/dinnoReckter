@@ -7,7 +7,8 @@ import time
 from datetime import datetime
 
 cod = []
-accel = 210
+accel = 170
+counta = 0
 
 def findDino():
     time.sleep(3)
@@ -23,10 +24,6 @@ def findDino():
     top_left = max_loc
     bottom_right = (top_left[0] + w, top_left[1] + h)
 
-    cv2.rectangle(imgcv, top_left, bottom_right, 0, 2)
-    cv2.rectangle(imgcv, (top_left[0] + 450, top_left[1] + 86), (bottom_right[0] + 350, bottom_right[1] - 40), 0, 2)
-    cv2.imwrite("match.png", imgcv)
-
     global cod
     cod = [top_left[1] + 86, bottom_right[1] - 40, top_left[0] + 450, bottom_right[0] + 350]
 
@@ -35,21 +32,33 @@ def pular():
     send = "{SPACE}"
     SendKeys.SendKeys(send)
 
-
 def ajustaImg():
-    monitor = {'top': cod[1] - 40, 'left': cod[2] - int(accel), 'width': 15, 'height': 200}
+    monitor = {'top': cod[1] - 100, 'left': cod[2] - int(accel), 'width': 10, 'height': 100}
     with mss() as sct:
         imgcv = np.array(sct.grab(monitor))
 
     imgcv = cv2.cvtColor(imgcv, cv2.COLOR_BGR2GRAY)
-    _, imgcv = cv2.threshold(imgcv, 128, 255, cv2.THRESH_BINARY | cv2.THRESH_OTSU)
+    _, imgcv = cv2.threshold(imgcv, 128, 255, cv2.THRESH_BINARY)
 
-    # cv2.imwrite("s.png", imgcv)
+    #cv2.imwrite("kappa"+str(counta)+".png", imgcv)
+    #global counta
+    #counta += 1
 
-    if cv2.countNonZero(imgcv) < 2910:
-        # print("Jump")
-        pular()
+    tempoflag = {'top': cod[1] + 100, 'left': cod[2] - int(accel), 'width': 10, 'height': 10}
+    with mss() as sct:
+        imgflag = np.array(sct.grab(tempoflag))
 
+    imgflag = cv2.cvtColor(imgflag, cv2.COLOR_BGR2GRAY)
+    _, imgflag = cv2.threshold(imgflag, 128, 255, cv2.THRESH_BINARY)
+
+    if cv2.countNonZero(imgflag) > 80:
+        if cv2.countNonZero(imgcv) < 900:
+            # print("Jump")
+            pular()
+    else:
+        if cv2.countNonZero(imgcv) > 20:
+            # print("Jump")
+            pular()
 
 def tirarPrint():
     findDino()
@@ -68,16 +77,16 @@ def tirarPrint():
 
 tirarPrint()
 
-"""
-  DEBUG DE FPSTRABSON
+""" 
+  DEBUG DE FPSTRABSON  
 
-def tirarPrint():
+def tirarPri nt():
   cod = findDino()
   dt = datetime.now().second
-  count = 0
+  count = 0 
   while(1):
     if dt != datetime.now().second:
-      print(count)
+      print (count)
       count = 0
       dt = datetime.now().second
     ajustaImg(cod)
